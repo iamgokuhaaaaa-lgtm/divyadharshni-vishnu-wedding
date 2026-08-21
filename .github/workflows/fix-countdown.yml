@@ -1,0 +1,144 @@
+name: Fix countdown safely
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-countdown.yml'
+      - 'index.html'
+      - 'PROJECT_CONTEXT.md'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-countdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Patch countdown in place
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          start = s.find('// ---- Countdown target:')
+          end_marker = 'setInterval(update, 1000);'
+          end = s.find(end_marker, start)
+
+          if start == -1 or end == -1:
+              raise SystemExit('Countdown block not found; refusing to modify index.html')
+
+          end += len(end_marker)
+
+          replacement = r'''// ---- Countdown target: 30 Aug 2026, 08:00 IST ----
+          // Use an explicit UTC timestamp so the countdown behaves consistently
+          // across Android, iPhone, desktop browsers, and WhatsApp webviews.
+          const target = Date.parse('2026-08-30T08:00:00+05:30');
+
+          const units = [
+            {key:'days', label:'Days', digits:3},
+            {key:'hours', label:'Hours', digits:2},
+            {key:'mins', label:'Min', digits:2},
+            {key:'secs', label:'Sec', digits:2}
+          ];
+
+          const flipRow = document.getElementById('flipRow');
+          const countdownLabel = document.getElementById('countdownLabel');
+          let prevVals = {};
+
+          // Rebuild only the timer digits; the rest of the invitation is untouched.
+          flipRow.innerHTML = '';
+          units.forEach((u)=>{
+            const unitEl = document.createElement('div');
+            unitEl.className = 'flip-unit';
+            unitEl.innerHTML = `
+              <div class="flip-label">${u.label}</div>
+              <div class="flip-digits" aria-label="${u.label}">
+                ${Array.from({length:u.digits}, (_,i)=>`
+                  <div class="flip-digit">
+                    <div class="digit-top" id="${u.key}-${i}-top">0</div>
+                    <div class="digit-bottom" id="${u.key}-${i}-bottom">0</div>
+                    <div class="digit-flip" id="${u.key}-${i}-flip"><span>0</span></div>
+                  </div>`).join('')}
+              </div>`;
+            flipRow.appendChild(unitEl);
+            prevVals[u.key] = null;
+          });
+
+          function setDigit(unit, pos, val){
+            const topEl = document.getElementById(`${unit}-${pos}-top`);
+            const bottomEl = document.getElementById(`${unit}-${pos}-bottom`);
+            const flapEl = document.getElementById(`${unit}-${pos}-flip`);
+            if(!topEl || !bottomEl || !flapEl) return;
+            const next = String(val);
+            if(topEl.textContent === next) return;
+            const flapSpan = flapEl.querySelector('span');
+            flapSpan.textContent = topEl.textContent;
+            flapEl.classList.remove('squish');
+            void flapEl.offsetWidth;
+            flapEl.classList.add('squish');
+            window.setTimeout(()=>{
+              flapSpan.textContent = next;
+              topEl.textContent = next;
+              bottomEl.textContent = next;
+              flapEl.classList.remove('squish');
+            }, 180);
+          }
+
+          function update(){
+            const diff = Math.max(0, target - Date.now());
+            if(diff === 0) countdownLabel.textContent = 'Today is the day!';
+            else countdownLabel.textContent = 'Counting down to our special day';
+
+            const vals = {
+              days: String(Math.floor(diff / 86400000)).padStart(3,'0'),
+              hours: String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0'),
+              mins: String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0'),
+              secs: String(Math.floor((diff % 60000) / 1000)).padStart(2,'0')
+            };
+
+            units.forEach(u=>{
+              const value = vals[u.key];
+              for(let i=0; i<u.digits; i++) setDigit(u.key, i, value[i]);
+              prevVals[u.key] = value;
+            });
+          }
+
+          update();
+          window.setInterval(update, 1000);'''
+
+          # Strip the common indentation from the replacement before inserting it.
+          replacement = '\n'.join(line[10:] if line.startswith('          ') else line for line in replacement.splitlines())
+          p.write_text(s[:start] + replacement + s[end:], encoding='utf-8')
+          print('Countdown patched successfully.')
+          PY
+
+      - name: Update project context
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('PROJECT_CONTEXT.md')
+          s = p.read_text(encoding='utf-8')
+          note = "\n- Countdown fix deployed via GitHub Actions: the timer now uses an explicit IST timestamp, rebuilds its digit DOM safely, and updates every second across mobile/desktop webviews.\n"
+          if 'Countdown fix deployed via GitHub Actions' not in s:
+              s += note
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit patched files
+        run: |
+          if git diff --quiet; then
+            echo 'No changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html PROJECT_CONTEXT.md
+          git commit -m 'Fix wedding invitation countdown'
+          git push
