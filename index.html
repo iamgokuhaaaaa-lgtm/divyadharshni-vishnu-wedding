@@ -412,6 +412,60 @@
   @media (prefers-reduced-motion: reduce){
     .flip-card .flap{ transition:none; }
   }
+
+/* Elegant live countdown */
+.elegant-countdown{
+  text-align:center;
+  margin: 18px auto 26px;
+  padding: 18px 16px 20px;
+  color: var(--plum);
+  position:relative;
+}
+.countdown-kicker{
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.30em;
+  margin-bottom:8px;
+  color:var(--gold);
+}
+.countdown-main-number{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(58px,17vw,82px);
+  line-height:.9;
+  font-weight:500;
+  letter-spacing:.02em;
+  color:var(--plum-deep);
+  text-shadow:0 1px 0 rgba(255,255,255,.8);
+}
+.countdown-main-label{
+  font-family:'Cinzel',serif;
+  font-size:11px;
+  letter-spacing:.38em;
+  margin:8px 0 13px .38em;
+  color:var(--lavender);
+}
+.countdown-subline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;
+  letter-spacing:.12em;
+  color:var(--plum);
+}
+.countdown-subline .dot{color:var(--gold);padding:0 6px;}
+.countdown-foot{
+  margin-top:15px;
+  font-family:'Cinzel',serif;
+  font-size:9px;
+  letter-spacing:.27em;
+  color:var(--gold);
+}
+.countdown-pulse{animation:countdownPulse .65s ease-out;}
+@keyframes countdownPulse{
+  0%{opacity:.72;transform:scale(.985);}
+  45%{opacity:1;transform:scale(1.012);}
+  100%{opacity:1;transform:scale(1);}
+}
+@media (prefers-reduced-motion:reduce){.countdown-pulse{animation:none;}}
+
 </style>
 </head>
 <body>
@@ -490,8 +544,13 @@
 
   <div class="countdown-section text-panel" style="margin:0 16px;">
     <div class="countdown-label" id="countdownLabel">Counting down to the muhurtham</div>
-    <div class="flip-row" id="flipRow"></div>
-  </div>
+    <div id="elegantCountdown" class="elegant-countdown" aria-label="Countdown to the wedding">
+  <div class="countdown-kicker">THE COUNTDOWN</div>
+  <div class="countdown-main-number" id="countdownDays">--</div>
+  <div class="countdown-main-label">DAYS</div>
+  <div class="countdown-subline"><span id="countdownHours">--</span> HOURS <span class="dot">·</span> <span id="countdownMinutes">--</span> MINUTES</div>
+  <div class="countdown-foot">UNTIL OUR BIG DAY</div>
+</div></div>
 
   <div class="details">
     <div class="date-badge">
@@ -539,82 +598,29 @@
 </div>
 
 <script>
-// ---- Countdown target: 30 Aug 2026, 08:00 IST ----
-// Use an explicit UTC timestamp so the countdown behaves consistently
-// across Android, iPhone, desktop browsers, and WhatsApp webviews.
-const target = Date.parse('2026-08-30T08:00:00+05:30');
-
-const units = [
-  {key:'days', label:'Days', digits:3},
-  {key:'hours', label:'Hours', digits:2},
-  {key:'mins', label:'Min', digits:2},
-  {key:'secs', label:'Sec', digits:2}
-];
-
-const flipRow = document.getElementById('flipRow');
-const countdownLabel = document.getElementById('countdownLabel');
-let prevVals = {};
-
-// Rebuild only the timer digits; the rest of the invitation is untouched.
-flipRow.innerHTML = '';
-units.forEach((u)=>{
-  const unitEl = document.createElement('div');
-  unitEl.className = 'flip-unit';
-  unitEl.innerHTML = `
-    <div class="flip-label">${u.label}</div>
-    <div class="flip-digits" aria-label="${u.label}">
-      ${Array.from({length:u.digits}, (_,i)=>`
-        <div class="flip-digit">
-<div class="digit-top" id="${u.key}-${i}-top">0</div>
-<div class="digit-bottom" id="${u.key}-${i}-bottom">0</div>
-<div class="digit-flip" id="${u.key}-${i}-flip"><span>0</span></div>
-        </div>`).join('')}
-    </div>`;
-  flipRow.appendChild(unitEl);
-  prevVals[u.key] = null;
-});
-
-function setDigit(unit, pos, val){
-  const topEl = document.getElementById(`${unit}-${pos}-top`);
-  const bottomEl = document.getElementById(`${unit}-${pos}-bottom`);
-  const flapEl = document.getElementById(`${unit}-${pos}-flip`);
-  if(!topEl || !bottomEl || !flapEl) return;
-  const next = String(val);
-  if(topEl.textContent === next) return;
-  const flapSpan = flapEl.querySelector('span');
-  flapSpan.textContent = topEl.textContent;
-  flapEl.classList.remove('squish');
-  void flapEl.offsetWidth;
-  flapEl.classList.add('squish');
-  window.setTimeout(()=>{
-    flapSpan.textContent = next;
-    topEl.textContent = next;
-    bottomEl.textContent = next;
-    flapEl.classList.remove('squish');
-  }, 180);
-}
-
-function update(){
-  const diff = Math.max(0, target - Date.now());
-  if(diff === 0) countdownLabel.textContent = 'Today is the day!';
-  else countdownLabel.textContent = 'Counting down to our special day';
-
-  const vals = {
-    days: String(Math.floor(diff / 86400000)).padStart(3,'0'),
-    hours: String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0'),
-    mins: String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0'),
-    secs: String(Math.floor((diff % 60000) / 1000)).padStart(2,'0')
-  };
-
-  units.forEach(u=>{
-    const value = vals[u.key];
-    for(let i=0; i<u.digits; i++) setDigit(u.key, i, value[i]);
-    prevVals[u.key] = value;
-  });
-}
-
-update();
-window.setInterval(update, 1000);
+// Elegant live countdown — 30 Aug 2026, 08:00 IST.
+(function(){
+  const target = new Date('2026-08-30T08:00:00+05:30').getTime();
+  const daysEl = document.getElementById('countdownDays');
+  const hoursEl = document.getElementById('countdownHours');
+  const minsEl = document.getElementById('countdownMinutes');
+  const mainEl = document.getElementById('elegantCountdown');
+  function update(){
+    const diff = Math.max(0, target - Date.now());
+    const totalMinutes = Math.floor(diff / 60000);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+    daysEl.textContent = String(days).padStart(2,'0');
+    hoursEl.textContent = String(hours).padStart(2,'0');
+    minsEl.textContent = String(minutes).padStart(2,'0');
+    mainEl.classList.remove('countdown-pulse');
+    void mainEl.offsetWidth;
+    mainEl.classList.add('countdown-pulse');
+  }
+  update();
+  setInterval(update, 1000);
+})();
 </script>
 </body>
 </html>
