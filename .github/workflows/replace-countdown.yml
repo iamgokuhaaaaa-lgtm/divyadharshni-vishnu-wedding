@@ -15,132 +15,21 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Replace countdown
+      - name: Clean countdown label
         run: |
           python3 <<'PY'
           from pathlib import Path
-          import re
-
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-
-          # Replace the complete existing countdown section, stopping at the known next section.
-          new_markup = '''<div class="countdown-section text-panel" style="margin:0 16px;">
-            <div id="elegantCountdown" class="elegant-countdown" aria-label="Countdown to the wedding">
-              <div class="countdown-kicker">THE COUNTDOWN</div>
-              <div class="countdown-main-number" id="countdownDays">--</div>
-              <div class="countdown-main-label">DAYS</div>
-              <div class="countdown-subline"><span id="countdownHours">--</span> HOURS <span class="dot">·</span> <span id="countdownMinutes">--</span> MINUTES</div>
-              <div class="countdown-foot">UNTIL OUR BIG DAY</div>
-            </div>
-          </div>
-
-          <div class="details">'''
-          s, n = re.subn(r'<div class="countdown-section text-panel" style="margin:0 16px;">.*?\n\s*<div class="details">', new_markup, s, count=1, flags=re.S)
-          if n == 0:
-              raise SystemExit('Could not find countdown section; aborting without changing index.html')
-
-          # Replace the old flip-clock script.
-          pattern = r'<script>\s*// ---- Countdown target: 30 Aug 2026, 08:00 IST ----.*?</script>'
-          script = '''<script>
-          // Elegant live countdown — 30 Aug 2026, 08:00 IST.
-          (function(){
-            const target = new Date('2026-08-30T08:00:00+05:30').getTime();
-            const daysEl = document.getElementById('countdownDays');
-            const hoursEl = document.getElementById('countdownHours');
-            const minsEl = document.getElementById('countdownMinutes');
-            const mainEl = document.getElementById('elegantCountdown');
-            function update(){
-              const diff = Math.max(0, target - Date.now());
-              const totalMinutes = Math.floor(diff / 60000);
-              const days = Math.floor(totalMinutes / 1440);
-              const hours = Math.floor((totalMinutes % 1440) / 60);
-              const minutes = totalMinutes % 60;
-              daysEl.textContent = String(days).padStart(2,'0');
-              hoursEl.textContent = String(hours).padStart(2,'0');
-              minsEl.textContent = String(minutes).padStart(2,'0');
-              mainEl.classList.remove('countdown-pulse');
-              void mainEl.offsetWidth;
-              mainEl.classList.add('countdown-pulse');
-            }
-            update();
-            setInterval(update, 1000);
-          })();
-          </script>'''
-          s, n2 = re.subn(pattern, script, s, count=1, flags=re.S)
-          if n2 == 0:
-              raise SystemExit('Could not find existing countdown script; aborting without changing index.html')
-
-          css = '''
-          /* Elegant live countdown */
-          .elegant-countdown{
-            text-align:center;
-            margin: 0 auto;
-            padding: 22px 16px 24px;
-            color: var(--plum);
-            position:relative;
-          }
-          .countdown-kicker{
-            font-family:'Cinzel',serif;
-            font-size:11px;
-            letter-spacing:.30em;
-            margin-bottom:10px;
-            color:var(--gold);
-          }
-          .countdown-main-number{
-            font-family:'Playfair Display',serif;
-            font-size:clamp(58px,17vw,82px);
-            line-height:.9;
-            font-weight:500;
-            letter-spacing:.02em;
-            color:var(--plum-deep);
-            text-shadow:0 1px 0 rgba(255,255,255,.8);
-          }
-          .countdown-main-label{
-            font-family:'Cinzel',serif;
-            font-size:11px;
-            letter-spacing:.38em;
-            margin:9px 0 14px .38em;
-            color:var(--lavender);
-          }
-          .countdown-subline{
-            font-family:'Cormorant Garamond',serif;
-            font-size:17px;
-            letter-spacing:.12em;
-            color:var(--plum);
-          }
-          .countdown-subline .dot{color:var(--gold);padding:0 6px;}
-          .countdown-foot{
-            margin-top:16px;
-            font-family:'Cinzel',serif;
-            font-size:9px;
-            letter-spacing:.27em;
-            color:var(--gold);
-          }
-          .countdown-pulse{animation:countdownPulse .65s ease-out;}
-          @keyframes countdownPulse{
-            0%{opacity:.72;transform:scale(.985);}
-            45%{opacity:1;transform:scale(1.012);}
-            100%{opacity:1;transform:scale(1);}
-          }
-          @media (prefers-reduced-motion:reduce){.countdown-pulse{animation:none;}}
-          '''
-          # Only add CSS if it is not already present.
-          if '.elegant-countdown{' not in s:
-              s, n3 = re.subn(r'</style>', css + '\n</style>', s, count=1)
-              if n3 == 0:
-                  raise SystemExit('Could not find </style>; aborting without changing index.html')
-
-          p.write_text(s, encoding='utf-8')
-          print('Countdown replacement completed')
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old='<div class="countdown-label" id="countdownLabel">Counting down to the muhurtham</div>'
+          s=s.replace(old,'')
+          p.write_text(s,encoding='utf-8')
           PY
-
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
           git diff --cached --quiet && exit 0
-          git commit -m "Replace flip clock with elegant live countdown"
+          git commit -m "Polish elegant countdown layout"
           git push
