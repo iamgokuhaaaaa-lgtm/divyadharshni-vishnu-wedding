@@ -413,58 +413,26 @@
     .flip-card .flap{ transition:none; }
   }
 
-/* Elegant live countdown */
-.elegant-countdown{
-  text-align:center;
-  margin: 18px auto 26px;
-  padding: 18px 16px 20px;
-  color: var(--plum);
-  position:relative;
-}
-.countdown-kicker{
-  font-family:'Cinzel',serif;
-  font-size:11px;
-  letter-spacing:.30em;
-  margin-bottom:8px;
-  color:var(--gold);
-}
-.countdown-main-number{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(58px,17vw,82px);
-  line-height:.9;
-  font-weight:500;
-  letter-spacing:.02em;
-  color:var(--plum-deep);
-  text-shadow:0 1px 0 rgba(255,255,255,.8);
-}
-.countdown-main-label{
-  font-family:'Cinzel',serif;
-  font-size:11px;
-  letter-spacing:.38em;
-  margin:8px 0 13px .38em;
-  color:var(--lavender);
-}
-.countdown-subline{
-  font-family:'Cormorant Garamond',serif;
-  font-size:17px;
-  letter-spacing:.12em;
-  color:var(--plum);
-}
-.countdown-subline .dot{color:var(--gold);padding:0 6px;}
-.countdown-foot{
-  margin-top:15px;
-  font-family:'Cinzel',serif;
-  font-size:9px;
-  letter-spacing:.27em;
-  color:var(--gold);
-}
-.countdown-pulse{animation:countdownPulse .65s ease-out;}
-@keyframes countdownPulse{
-  0%{opacity:.72;transform:scale(.985);}
-  45%{opacity:1;transform:scale(1.012);}
-  100%{opacity:1;transform:scale(1);}
-}
-@media (prefers-reduced-motion:reduce){.countdown-pulse{animation:none;}}
+
+
+
+/* Premium single-line wedding countdown */
+.elegant-countdown{text-align:center;margin:0 auto;padding:24px 10px 26px;color:var(--plum);position:relative;overflow:hidden}
+.countdown-kicker{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.34em;color:var(--gold);margin-bottom:8px}
+.countdown-date{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,30px);line-height:1;letter-spacing:.08em;color:var(--plum-deep)}
+.countdown-date span{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.20em;vertical-align:middle;color:var(--lavender)}
+.countdown-heart{color:var(--gold);font-size:15px;line-height:1;margin:9px 0 8px;animation:heartPop 1.8s ease-in-out infinite;text-shadow:0 0 12px rgba(190,150,80,.22)}
+.countdown-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(7px,2.3vw,16px);white-space:nowrap}
+.countdown-unit{display:flex;flex-direction:column;align-items:center;min-width:clamp(72px,22vw,110px)}
+.countdown-unit span{font-family:'Playfair Display',serif;font-size:clamp(38px,10.5vw,58px);line-height:.9;font-weight:500;letter-spacing:.01em;color:var(--plum-deep)}
+.countdown-unit small{margin-top:7px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.24em;color:var(--lavender)}
+.countdown-separator{font-family:'Playfair Display',serif;font-size:34px;line-height:1;color:var(--gold);padding-bottom:19px;opacity:.75}
+.countdown-foot{margin-top:15px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.30em;color:var(--gold)}
+.countdown-pulse{animation:countdownPulse .65s ease-out}
+@keyframes countdownPulse{0%{opacity:.72;transform:scale(.985)}45%{opacity:1;transform:scale(1.012)}100%{opacity:1;transform:scale(1)}}
+@keyframes heartPop{0%,100%{transform:scale(1);opacity:.72}12%{transform:scale(1.22);opacity:1}24%{transform:scale(1);opacity:.82}}
+@media (max-width:420px){.countdown-row{gap:4px}.countdown-unit{min-width:68px}.countdown-unit span{font-size:35px}.countdown-separator{font-size:28px;padding-bottom:18px}.countdown-unit small{font-size:7px;letter-spacing:.18em}}
+@media (prefers-reduced-motion:reduce){.countdown-pulse,.countdown-heart{animation:none}}
 
 </style>
 </head>
@@ -543,16 +511,22 @@
   </div>
 
   <div class="countdown-section text-panel" style="margin:0 16px;">
-    
-    <div id="elegantCountdown" class="elegant-countdown" aria-label="Countdown to the wedding">
-  <div class="countdown-kicker">THE COUNTDOWN</div>
-  <div class="countdown-main-number" id="countdownDays">--</div>
-  <div class="countdown-main-label">DAYS</div>
-  <div class="countdown-subline"><span id="countdownHours">--</span> HOURS <span class="dot">·</span> <span id="countdownMinutes">--</span> MINUTES</div>
-  <div class="countdown-foot">UNTIL OUR BIG DAY</div>
-</div></div>
+  <div id="elegantCountdown" class="elegant-countdown" aria-label="Countdown to the wedding">
+    <div class="countdown-kicker">OUR WEDDING DAY</div>
+    <div class="countdown-date">30 <span>AUGUST</span> 2026</div>
+    <div class="countdown-heart" aria-hidden="true">♥</div>
+    <div class="countdown-row">
+      <div class="countdown-unit"><span id="countdownDays">--</span><small>DAYS</small></div>
+      <div class="countdown-separator">:</div>
+      <div class="countdown-unit"><span id="countdownHours">--</span><small>HOURS</small></div>
+      <div class="countdown-separator">:</div>
+      <div class="countdown-unit"><span id="countdownMinutes">--</span><small>MINUTES</small></div>
+    </div>
+    <div class="countdown-foot">UNTIL OUR BIG DAY</div>
+  </div>
+</div>
 
-  <div class="details">
+<div class="details">
     <div class="date-badge">
       <svg class="date-emblem" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.3">
         <path d="M12 2 C 9 2, 8 6, 12 7 C 16 6, 15 2, 12 2 Z" fill="rgba(255,255,255,0.85)" stroke="none"/>
