@@ -10,19 +10,18 @@
 - Hosting: **GitHub Pages**
 - Live URL: `https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/`
 - Main entry file: `index.html`
-- Current date of this context update: **2026-08-21**
 
 ## 2. Current status
 
-The invitation is live on GitHub Pages and opens successfully for the owner. The site was originally a self-contained HTML invitation and was renamed from `wedding-invitation.html` to `index.html` so GitHub Pages could serve it as the homepage.
+The invitation is live on GitHub Pages. The project is intentionally kept simple because the owner is a GitHub beginner.
 
-The owner is a GitHub beginner. The intended workflow is therefore:
+Current working setup:
 
-1. Keep the project in one simple GitHub repository.
-2. Keep the public URL stable.
-3. Make changes directly in the repository when possible.
-4. Keep this markdown file as persistent context so future sessions can understand the project without reconstructing the history.
-5. Allow the owner's friend to be added as a GitHub collaborator later so they can edit the same repository.
+1. `index.html` is the live invitation.
+2. GitHub Pages hosts the site at the stable public URL above.
+3. `preview/DSC04255.JPG` is the currently selected WhatsApp/social preview image.
+4. `PROJECT_CONTEXT.md` is the persistent project memory and must be updated after meaningful changes.
+5. GitHub Actions automation that was previously attempted and failed has been removed. Do not reintroduce automation unless explicitly requested.
 
 ## 3. Design direction
 
@@ -33,99 +32,118 @@ The invitation uses a premium Indian wedding aesthetic with:
 - Lavender accents
 - Muted gold accents
 - Rose/pink accents
-- Elegant serif typography
-- Cormorant Garamond, Playfair Display, Cinzel/Cinzel Decorative, and Alex Brush fonts
-- A romantic couple portrait used as the main visual/background treatment
+- Elegant serif and script typography
+- Romantic couple portrait as the main visual
 
 The existing design should be **preserved rather than replaced wholesale** unless the owner explicitly asks for a redesign.
 
-## 4. Existing website features / decisions
+## 4. Current invitation features / decisions
 
 The current HTML contains:
 
 - Wedding invitation hero section
 - Couple names: **Divyadharshni & Vishnu**
 - Wedding date: **Sunday, 30 August 2026**
-- Venue: **Kallidaikurichi**
+- Venue: **Kallidaikurichi / Town Panchayat Marriage Hall**
 - Google Maps/venue interaction
-- Countdown / flip-clock style date countdown
 - Mobile-first layout
 - Single-page invitation structure
 - Existing couple photograph embedded in the self-contained HTML
 - Decorative wedding typography and styling
 
-### Important previous fixes
+### Latest design changes deployed to `index.html`
 
-Previous testing identified mobile rendering issues with the flip clock and contrast. Those fixes should not be casually removed when editing the site.
+The owner supplied one exact reference invitation image and explicitly said to use **that image only as the reference** for the requested visual treatment. No other generated artwork should be substituted.
 
-The project plan also identified future work such as additional photos/slideshow and further invitation sections. Those are future enhancements unless the owner explicitly changes priority.
+Latest requested/deployed changes:
 
-## 5. WhatsApp sharing goal
+- Use the **Vinayakar/Ganesha artwork from the supplied reference image** as the top Vinayakar treatment.
+- Remove the duplicate golden/orange date/muhurtham box.
+- Keep one wedding date presentation and make the date static.
+- Countdown is simplified to **DAYS · HOURS · MINUTES** only.
+- Days, hours, and minutes are large and arranged together on one line where the viewport allows, with responsive behavior on small screens.
+- Only the countdown values should pulse/update; the surrounding countdown container should remain still.
+- **The heart is intentionally left alone** and should not be redesigned or replaced.
+- Preserve the rest of the invitation and existing functionality.
 
-The owner wants the invitation to be shared as **one common link** through WhatsApp, with an attractive preview card similar to Google Maps, Spotify, Amazon, etc.
+The owner confirmed the edited `index.html` was manually replaced in GitHub after the updated file was prepared.
 
-The desired behavior is:
+## 5. WhatsApp sharing / preview
 
-- Send only the website URL in WhatsApp.
-- WhatsApp should automatically generate a rich link preview.
-- Preview should use the couple image supplied by the owner.
-- Preview title should be: **Divyadharshni & Vishnu — Wedding Invitation**.
-- Preview description should mention the wedding invitation and date.
-- Target preview dimensions: **1200 × 630**.
+The owner wants the invitation shared as one stable link through WhatsApp with a rich preview card containing image, title, and description.
 
-The intended Open Graph metadata is:
+This is currently working.
 
-```html
-<meta property="og:title" content="Divyadharshni &amp; Vishnu — Wedding Invitation">
-<meta property="og:description" content="You're invited to celebrate our special day. Sunday, 30 August 2026.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/">
-<meta property="og:image" content="https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/preview.jpg">
-<meta property="og:image:secure_url" content="https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/preview.jpg">
-<meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Divyadharshni &amp; Vishnu — Wedding Invitation">
-<meta name="twitter:description" content="You're invited to celebrate our special day.">
-<meta name="twitter:image" content="https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/preview.jpg">
-```
+Current preview image:
 
-**Important:** As of this context update, the exact `preview.jpg` path has NOT been confirmed in the repository. The repository currently contains two PNG image assets uploaded by the owner, but no file named `preview.jpg`. Before finalizing the Open Graph image URL, verify the actual preview image filename/path in GitHub.
+`preview/DSC04255.JPG`
 
-## 6. Current image assets in repository
+Current public image URL:
 
-The repository currently contains these uploaded PNG files:
+`https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/preview/DSC04255.JPG`
 
-- `ChatGPT Image Aug 21, 2026, 05_15_52 PM.png`
-- `ChatGPT Image Aug 21, 2026, 05_27_19 PM.png`
+The owner successfully tested that WhatsApp displays the image + title + description preview.
 
-Do not delete or rename these without checking whether they are used by the invitation.
+### Preview folder convention
 
-## 7. Social preview image supplied by owner
+The owner wants a dedicated `preview/` folder so preview images can be experimented with independently of the main invitation.
 
-The owner supplied a portrait couple image and asked for it to be used as the image people see when the invitation link is shared.
+Current file:
 
-The requested sharing preview format is **1200 × 630**. The visual should remain elegant and recognizable at small WhatsApp preview sizes.
+`preview/DSC04255.JPG`
 
-If a new preview image is generated or uploaded, give it a simple stable filename such as:
+For future experiments, the safest simple workflow is:
 
-`preview.jpg`
+1. Keep the active preview at the stable filename/path `preview/DSC04255.JPG`.
+2. Delete the old image when replacing it.
+3. Upload the new image using the same filename `DSC04255.JPG`.
+4. Do not rename the extension or change case (`.JPG` vs `.jpg`) unless the HTML is also updated.
+5. Avoid making the HTML dynamically guess which image is inside the folder; GitHub Pages is static, so a fixed filename is more reliable.
 
-or, if PNG is required:
+WhatsApp may cache an older preview. A website image changing does not guarantee instant refresh of a preview already cached by WhatsApp.
 
-`preview.png`
+## 6. Open Graph / social metadata
 
-Then update the Open Graph tags to match the actual deployed filename.
+The desired metadata remains:
+
+- Title: **Divyadharshni & Vishnu — Wedding Invitation**
+- Description: invitation/wedding date text
+- Type: website
+- URL: stable GitHub Pages URL
+- Image: current `preview/DSC04255.JPG`
+- Image target: approximately 1200 × 630 for social sharing
+- Twitter card: `summary_large_image`
+
+Important: the active preview path is now `preview/DSC04255.JPG`, not the older `preview.jpg` proposal.
+
+## 7. Image/reference rules
+
+The owner supplied a specific reference image showing the complete invitation artwork, including:
+
+- the Vinayakar/Ganesha line-art treatment
+- lavender/purple floral decoration
+- cream/plum/gold wedding palette
+- couple portrait treatment
+- elegant typography
+- countdown styling
+- date/muhurtham styling
+
+The owner explicitly said: **“this image is good enough dont use anything else.”**
+
+Therefore, when refining the Vinayakar or visual direction, use only that supplied reference image as the design reference. Do not substitute another generated Vinayakar or unrelated artwork.
+
+The owner also explicitly requested that the **heart be left alone** in the latest countdown redesign.
 
 ## 8. Hosting / GitHub history
 
 - GitHub repository was created for the invitation.
 - GitHub Pages was enabled.
 - The original file was renamed to `index.html`.
-- The live public URL is stable and should remain unchanged while iterating.
+- GitHub Pages became the public host.
+- Live URL established:
+  `https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/`
 - The owner has connected GitHub to ChatGPT and granted repository access.
-- ChatGPT can now read and write repository text files through the GitHub connection.
+- ChatGPT can read and write repository text files through the GitHub connection.
 
 ## 9. Collaboration goal
 
@@ -144,16 +162,13 @@ The friend does not need access to the owner's ChatGPT account.
 
 The owner is a **GitHub beginner**. Instructions should therefore be extremely simple and click-by-click. Avoid unnecessary Git commands, branches, terminal commands, or complex Git concepts unless they become necessary.
 
-## 11. Change log
+## 11. Automation history
 
-### Initial project / v4 context
+A GitHub Actions approach was previously attempted to automate countdown/preview changes. It produced failed jobs and was ultimately cleaned up.
 
-- Single self-contained HTML invitation was established.
-- Main wedding visual and invitation styling were established.
-- Mobile flip-clock/countdown behavior was tested and fixed.
-- Mobile contrast/readability issues were identified and fixed.
-- Venue/Google Maps interaction was kept compact and mobile friendly.
-- Additional photo/slideshow work remained a future enhancement.
+The failed workflow files were removed. The project should currently remain simple and should **not rely on GitHub Actions** for routine preview or invitation edits.
+
+## 12. Change log
 
 ### Hosting setup
 
@@ -161,34 +176,56 @@ The owner is a **GitHub beginner**. Instructions should therefore be extremely s
 - Uploaded the invitation.
 - Renamed `wedding-invitation.html` → `index.html`.
 - GitHub Pages became the public host.
-- Live URL established:
-  `https://iamgokuhaaaaa-lgtm.github.io/divyadharshni-vishnu-wedding/`
+- Live URL established and kept stable.
 
 ### WhatsApp preview work
 
 - Owner requested a rich WhatsApp link preview.
 - Owner supplied the couple image to use as the preview visual.
 - A 1200 × 630 social-preview concept was prepared.
-- Open Graph/Twitter metadata was prepared conceptually and must point to the actual image file hosted in the repository.
+- Open Graph/Twitter metadata was added and successfully tested in WhatsApp.
+- The active preview is now `preview/DSC04255.JPG`.
+- Owner confirmed that WhatsApp displays the preview image, title, and description successfully.
+
+### Countdown redesign
+
+- The original flip-clock countdown was abandoned because it was unreliable/stuck.
+- Countdown was redesigned to show **days, hours, and minutes only**.
+- Days, hours, and minutes are large and grouped together.
+- Countdown values are intended to remain visibly alive through subtle pulsing/updating.
+- Static wedding date remains separate from the countdown.
+- The duplicate golden/orange date/muhurtham card was removed.
+- The heart was explicitly left unchanged.
+
+### Vinayakar/reference redesign
+
+- Owner supplied an exact reference image and requested that it be the sole visual reference.
+- Vinayakar/Ganesha treatment was changed to use the supplied reference artwork as the basis for the top treatment.
+- Do not substitute unrelated/generated Vinayakar artwork in future edits.
+
+### Repository cleanup
+
+- Failed GitHub Actions workflows from the experimental automation approach were removed.
+- Routine edits should now be made directly and deliberately rather than through broken automation.
 
 ### Context persistence
 
-- This file was created specifically so future ChatGPT sessions and collaborators can recover the project state, decisions, pending work, and important constraints.
-- Update this file after meaningful changes.
+- This file exists specifically so future ChatGPT sessions and collaborators can recover project state, decisions, pending work, and important constraints.
+- Update this file after every meaningful design, hosting, preview, or behavior change.
 
-## 12. Pending next steps
+## 13. Pending / future work
 
-1. Verify which of the uploaded PNGs is the intended 1200 × 630 WhatsApp preview, or upload/rename the final preview as `preview.jpg`.
-2. Ensure `index.html` contains the final Open Graph metadata pointing to the real image path.
-3. Commit the metadata update.
-4. Wait for GitHub Pages to redeploy.
-5. Test the URL in WhatsApp by sending it to a private/self chat.
-6. If WhatsApp caches an older preview, test with a fresh URL/query only for debugging; do not change the permanent public URL unnecessarily.
-7. Continue visual polish only after confirming the share preview works.
+1. Continue visual polish only when the owner requests it.
+2. Potential future enhancement: additional photos/slideshow.
+3. Potential future enhancement: further invitation sections.
+4. If changing the WhatsApp preview, replace `preview/DSC04255.JPG` with another image using the same exact filename/path.
+5. If changing `index.html`, preserve the current working WhatsApp metadata, mobile behavior, countdown behavior, and embedded couple image.
 
-## 13. Editing rules for future work
+## 14. Editing rules for future work
 
 - Preserve the existing invitation's overall visual language unless the owner requests a redesign.
+- Use the owner's supplied reference image as the sole visual reference for the current Vinayakar/design treatment.
+- Do not change the heart unless explicitly requested.
 - Do not remove working mobile fixes without testing the result.
 - Keep the public URL stable.
 - Prefer simple files and simple deployment.
@@ -196,5 +233,4 @@ The owner is a **GitHub beginner**. Instructions should therefore be extremely s
 - Whenever changing a feature, append a short dated entry to the change log.
 - Never assume an asset exists: verify the repository path before putting it into HTML.
 - Before changing `index.html`, preserve existing functionality and test the resulting live page on mobile.
-
-- Countdown fix deployed via GitHub Actions: the timer now uses an explicit IST timestamp, rebuilds its digit DOM safely, and updates every second across mobile/desktop webviews.
+- Do not reintroduce the failed GitHub Actions automation unless the owner explicitly asks for automation.
