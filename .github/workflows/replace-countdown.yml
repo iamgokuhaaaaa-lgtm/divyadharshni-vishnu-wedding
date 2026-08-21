@@ -25,19 +25,23 @@ jobs:
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
 
-          # Replace the existing flip-clock row with a simple premium layout.
-          new_markup = '''<div id="elegantCountdown" class="elegant-countdown" aria-label="Countdown to the wedding">
-            <div class="countdown-kicker">THE COUNTDOWN</div>
-            <div class="countdown-main-number" id="countdownDays">--</div>
-            <div class="countdown-main-label">DAYS</div>
-            <div class="countdown-subline"><span id="countdownHours">--</span> HOURS <span class="dot">·</span> <span id="countdownMinutes">--</span> MINUTES</div>
-            <div class="countdown-foot">UNTIL OUR BIG DAY</div>
-          </div>'''
-          s, n = re.subn(r'<div[^>]*id=["\']flipRow["\'][^>]*>.*?</div>\s*(?=</[^>]+>|<div)', new_markup, s, count=1, flags=re.S)
-          if n == 0:
-              raise SystemExit('Could not find flipRow; aborting without changing index.html')
+          # Replace the complete existing countdown section, stopping at the known next section.
+          new_markup = '''<div class="countdown-section text-panel" style="margin:0 16px;">
+            <div id="elegantCountdown" class="elegant-countdown" aria-label="Countdown to the wedding">
+              <div class="countdown-kicker">THE COUNTDOWN</div>
+              <div class="countdown-main-number" id="countdownDays">--</div>
+              <div class="countdown-main-label">DAYS</div>
+              <div class="countdown-subline"><span id="countdownHours">--</span> HOURS <span class="dot">·</span> <span id="countdownMinutes">--</span> MINUTES</div>
+              <div class="countdown-foot">UNTIL OUR BIG DAY</div>
+            </div>
+          </div>
 
-          # Replace the old countdown script, identified by its explicit target line.
+          <div class="details">'''
+          s, n = re.subn(r'<div class="countdown-section text-panel" style="margin:0 16px;">.*?\n\s*<div class="details">', new_markup, s, count=1, flags=re.S)
+          if n == 0:
+              raise SystemExit('Could not find countdown section; aborting without changing index.html')
+
+          # Replace the old flip-clock script.
           pattern = r'<script>\s*// ---- Countdown target: 30 Aug 2026, 08:00 IST ----.*?</script>'
           script = '''<script>
           // Elegant live countdown — 30 Aug 2026, 08:00 IST.
@@ -68,13 +72,12 @@ jobs:
           if n2 == 0:
               raise SystemExit('Could not find existing countdown script; aborting without changing index.html')
 
-          # Add the premium styling once, before </style>.
           css = '''
           /* Elegant live countdown */
           .elegant-countdown{
             text-align:center;
-            margin: 18px auto 26px;
-            padding: 18px 16px 20px;
+            margin: 0 auto;
+            padding: 22px 16px 24px;
             color: var(--plum);
             position:relative;
           }
@@ -82,7 +85,7 @@ jobs:
             font-family:'Cinzel',serif;
             font-size:11px;
             letter-spacing:.30em;
-            margin-bottom:8px;
+            margin-bottom:10px;
             color:var(--gold);
           }
           .countdown-main-number{
@@ -98,7 +101,7 @@ jobs:
             font-family:'Cinzel',serif;
             font-size:11px;
             letter-spacing:.38em;
-            margin:8px 0 13px .38em;
+            margin:9px 0 14px .38em;
             color:var(--lavender);
           }
           .countdown-subline{
@@ -109,7 +112,7 @@ jobs:
           }
           .countdown-subline .dot{color:var(--gold);padding:0 6px;}
           .countdown-foot{
-            margin-top:15px;
+            margin-top:16px;
             font-family:'Cinzel',serif;
             font-size:9px;
             letter-spacing:.27em;
@@ -123,9 +126,11 @@ jobs:
           }
           @media (prefers-reduced-motion:reduce){.countdown-pulse{animation:none;}}
           '''
-          s, n3 = re.subn(r'</style>', css + '\n</style>', s, count=1)
-          if n3 == 0:
-              raise SystemExit('Could not find </style>; aborting without changing index.html')
+          # Only add CSS if it is not already present.
+          if '.elegant-countdown{' not in s:
+              s, n3 = re.subn(r'</style>', css + '\n</style>', s, count=1)
+              if n3 == 0:
+                  raise SystemExit('Could not find </style>; aborting without changing index.html')
 
           p.write_text(s, encoding='utf-8')
           print('Countdown replacement completed')
