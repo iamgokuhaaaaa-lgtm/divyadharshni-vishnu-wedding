@@ -196,3 +196,5 @@ The owner is a **GitHub beginner**. Instructions should therefore be extremely s
 - Whenever changing a feature, append a short dated entry to the change log.
 - Never assume an asset exists: verify the repository path before putting it into HTML.
 - Before changing `index.html`, preserve existing functionality and test the resulting live page on mobile.
+
+- Countdown fix deployed via GitHub Actions: the timer now uses an explicit IST timestamp, rebuilds its digit DOM safely, and updates every second across mobile/desktop webviews.

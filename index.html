@@ -540,7 +540,9 @@
 
 <script>
 // ---- Countdown target: 30 Aug 2026, 08:00 IST ----
-const target = new Date("2026-08-30T08:00:00+05:30").getTime();
+// Use an explicit UTC timestamp so the countdown behaves consistently
+// across Android, iPhone, desktop browsers, and WhatsApp webviews.
+const target = Date.parse('2026-08-30T08:00:00+05:30');
 
 const units = [
   {key:'days', label:'Days', digits:3},
@@ -550,28 +552,25 @@ const units = [
 ];
 
 const flipRow = document.getElementById('flipRow');
+const countdownLabel = document.getElementById('countdownLabel');
 let prevVals = {};
 
-units.forEach((u, i)=>{
+// Rebuild only the timer digits; the rest of the invitation is untouched.
+flipRow.innerHTML = '';
+units.forEach((u)=>{
   const unitEl = document.createElement('div');
   unitEl.className = 'flip-unit';
-  let digitsHtml = '';
-  for(let d=0; d<u.digits; d++){
-    digitsHtml += `
-      <div class="flip-card" data-unit="${u.key}" data-pos="${d}">
-        <div class="half top"><span id="${u.key}-${d}-top">0</span></div>
-        <div class="half bottom"><span id="${u.key}-${d}-bottom">0</span></div>
-        <div class="flap" id="${u.key}-${d}-flip"><span>0</span></div>
-      </div>`;
-  }
-  unitEl.innerHTML = `<div class="flip-digits">${digitsHtml}</div><div class="lbl">${u.label}</div>`;
+  unitEl.innerHTML = `
+    <div class="flip-label">${u.label}</div>
+    <div class="flip-digits" aria-label="${u.label}">
+      ${Array.from({length:u.digits}, (_,i)=>`
+        <div class="flip-digit">
+<div class="digit-top" id="${u.key}-${i}-top">0</div>
+<div class="digit-bottom" id="${u.key}-${i}-bottom">0</div>
+<div class="digit-flip" id="${u.key}-${i}-flip"><span>0</span></div>
+        </div>`).join('')}
+    </div>`;
   flipRow.appendChild(unitEl);
-  if(i < units.length - 1){
-    const colon = document.createElement('div');
-    colon.className = 'flip-colon';
-    colon.textContent = ':';
-    flipRow.appendChild(colon);
-  }
   prevVals[u.key] = null;
 });
 
@@ -579,54 +578,43 @@ function setDigit(unit, pos, val){
   const topEl = document.getElementById(`${unit}-${pos}-top`);
   const bottomEl = document.getElementById(`${unit}-${pos}-bottom`);
   const flapEl = document.getElementById(`${unit}-${pos}-flip`);
+  if(!topEl || !bottomEl || !flapEl) return;
+  const next = String(val);
+  if(topEl.textContent === next) return;
   const flapSpan = flapEl.querySelector('span');
-
-  if(topEl.textContent !== String(val)){
-    flapSpan.textContent = topEl.textContent; // old digit shown on the flap
+  flapSpan.textContent = topEl.textContent;
+  flapEl.classList.remove('squish');
+  void flapEl.offsetWidth;
+  flapEl.classList.add('squish');
+  window.setTimeout(()=>{
+    flapSpan.textContent = next;
+    topEl.textContent = next;
+    bottomEl.textContent = next;
     flapEl.classList.remove('squish');
-    void flapEl.getBoundingClientRect(); // force reflow so the next class add re-triggers the transition
-    flapEl.classList.add('squish'); // fold the old digit away
-    setTimeout(()=>{
-      flapSpan.textContent = val;      // swap flap to new digit
-      topEl.textContent = val;
-      bottomEl.textContent = val;
-      flapEl.classList.remove('squish'); // unfold, revealing new digit
-    }, 200);
-  }
+  }, 180);
 }
 
 function update(){
-  const now = Date.now();
-  let diff = target - now;
-  const label = document.getElementById('countdownLabel');
-
-  if(diff <= 0){
-    label.textContent = "Today is the day!";
-    diff = 0;
-  }
-
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins = Math.floor((diff % 3600000) / 60000);
-  const secs = Math.floor((diff % 60000) / 1000);
+  const diff = Math.max(0, target - Date.now());
+  if(diff === 0) countdownLabel.textContent = 'Today is the day!';
+  else countdownLabel.textContent = 'Counting down to our special day';
 
   const vals = {
-    days: String(days).padStart(3,'0'),
-    hours: String(hours).padStart(2,'0'),
-    mins: String(mins).padStart(2,'0'),
-    secs: String(secs).padStart(2,'0')
+    days: String(Math.floor(diff / 86400000)).padStart(3,'0'),
+    hours: String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0'),
+    mins: String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0'),
+    secs: String(Math.floor((diff % 60000) / 1000)).padStart(2,'0')
   };
 
   units.forEach(u=>{
-    const str = vals[u.key];
-    for(let d=0; d<u.digits; d++){
-      setDigit(u.key, d, str[d]);
-    }
+    const value = vals[u.key];
+    for(let i=0; i<u.digits; i++) setDigit(u.key, i, value[i]);
+    prevVals[u.key] = value;
   });
 }
 
 update();
-setInterval(update, 1000);
+window.setInterval(update, 1000);
 </script>
 </body>
 </html>
