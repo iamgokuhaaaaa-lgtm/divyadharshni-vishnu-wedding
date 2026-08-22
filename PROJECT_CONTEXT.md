@@ -265,6 +265,29 @@ The failed workflow files were removed. The project should currently remain simp
 - This file exists specifically so future ChatGPT sessions and collaborators can recover project state, decisions, pending work, and important constraints.
 - Update this file after every meaningful design, hosting, preview, or behavior change.
 
+### 22 August 2026 — Top-level image variables (editable)
+
+- A small script was added to `index.html` that exposes three top-level JavaScript variables making image filenames easy to change without hunting through the markup or CSS:
+  - `IMG_DIR` — directory prefixes (`preview/`, `background/`, `photos/`).
+  - `IMG_FILE` — filenames for the active images (e.g. `preview: 'DSC04255.JPG'`, `background: 'background.jpg'`, `couple: 'couple.jpg'`).
+  - `IMAGE_PATHS` — derived full paths (`preview`, `background`, `couple`) built from the two objects above.
+
+- What the script does:
+  - Sets the CSS variable `--bg-photo` to `url("background/<filename>")` so the background can be changed by editing `IMG_FILE.background`.
+  - Updates the Open Graph (`meta[property="og:image"]`) and Twitter (`meta[name="twitter:image"]`) `content` to the `preview` image path so social previews reflect the chosen file.
+  - Updates the couple photo `<img>` `src` to the `photos/` image path.
+
+- How to change an image quickly:
+  1. Open `index.html` and find the `IMG_FILE` object near the top of the file.
+  2. Change only the filename value for `preview`, `background`, or `couple` (for example, replace `'couple.jpg'` with `'garden.jpg'`).
+  3. Save and refresh the site. (Because GitHub Pages is static, commit & push to the repository to publish changes.)
+
+- Notes and best practices:
+  - Keep the directory names as-is (`preview/`, `background/`, `photos/`) unless you also update the `IMG_DIR` object.
+  - Use the exact filename and extension case (`.JPG` vs `.jpg`) you uploaded to the repo.
+  - The script runs on page load and will update meta tags/`--bg-photo` dynamically for testing; however, for production sharing (social preview caches), replace the preview file at the same path or use the same filename when updating the preview image to reduce caching issues.
+  - The CSS `:root` variables for veil/blur remain the canonical place for visual tuning; do not mix image filename edits with veil/blur changes.
+
 ## 13. Pending / future work
 
 1. Continue visual polish only when the owner requests it.
