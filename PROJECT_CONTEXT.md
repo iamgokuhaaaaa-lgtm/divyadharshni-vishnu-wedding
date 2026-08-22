@@ -20,8 +20,11 @@ Current working setup:
 1. `index.html` is the live invitation.
 2. GitHub Pages hosts the site at the stable public URL above.
 3. `preview/DSC04255.JPG` is the currently selected WhatsApp/social preview image.
-4. `PROJECT_CONTEXT.md` is the persistent project memory and must be updated after meaningful changes.
-5. GitHub Actions automation that was previously attempted and failed has been removed. Do not reintroduce automation unless explicitly requested.
+4. Background portrait lives in `background/` (active file: `background/background.jpg`).
+5. Main couple photo lives in `photos/` (active file: `photos/couple.jpg`).
+6. Background wash / panel blur strength is controlled by CSS variables at the top of `index.html` (`:root`).
+7. `PROJECT_CONTEXT.md` is the persistent project memory and must be updated after meaningful changes.
+8. GitHub Actions automation that was previously attempted and failed has been removed. Do not reintroduce automation unless explicitly requested.
 
 ## 3. Design direction
 
@@ -48,7 +51,8 @@ The current HTML contains:
 - Google Maps/venue interaction
 - Mobile-first layout
 - Single-page invitation structure
-- Existing couple photograph embedded in the self-contained HTML
+- Couple photograph loaded from `photos/couple.jpg` (not embedded in the HTML)
+- Background portrait loaded from `background/background.jpg` (not embedded in the HTML)
 - Decorative wedding typography and styling
 
 ### Latest design changes deployed to `index.html`
@@ -67,6 +71,40 @@ Latest requested/deployed changes:
 - Preserve the rest of the invitation and existing functionality.
 
 The owner confirmed the edited `index.html` was manually replaced in GitHub after the updated file was prepared.
+
+### Background translucency / blur knobs (22 August 2026)
+
+There was no single variable before. The cream wash over the background photo and the frosted card blur are now adjustable in `index.html` inside `:root`.
+
+Tweak these and refresh the page to compare looks:
+
+- `--bg-veil` — main control for how milky the background photo is. `0` = photo fully visible, `1` = the previous look, higher than `1` = heavier cream wash.
+- `--bg-veil-top`, `--bg-veil-mid`, `--bg-veil-deep`, `--bg-veil-bottom` — optional finer control of the gradient stops.
+- `--panel-opacity` — how solid the frosted invitation cards are (was `0.62`).
+- `--panel-blur` — blur amount on those cards (was `7px`).
+- `--bg-photo-position` and `--bg-photo-saturate` — crop/saturation of the background photo.
+
+Do not hunt through the rest of the CSS for overlay numbers; change `:root` only.
+
+### Photo folders (22 August 2026)
+
+The owner asked for separate folders so favorite photos can be uploaded and tried without rewriting the invitation layout.
+
+- Background portrait folder: `background/`
+- Active background file: `background/background.jpg`
+- Main couple photo folder: `photos/`
+- Active couple photo file: `photos/couple.jpg`
+
+Two supported workflows:
+
+1. **Same filename:** delete the old `background.jpg` or `couple.jpg`, upload a new image with that exact name. No `index.html` change needed (keep `.jpg` casing).
+2. **Many favorites:** keep extra files in the same folder (`background/photo-a.jpg`, `photos/garden.jpg`, etc.) and change only the filename in `index.html`:
+   - background: `--bg-photo: url("background/YOUR-FILE.jpg");`
+   - couple photo: `<img src="photos/YOUR-FILE.jpg" ...>`
+
+Vinayakar/Ganesha artwork remains embedded in `index.html` and should still not be substituted.
+
+WhatsApp preview is still independent and remains `preview/DSC04255.JPG`.
 
 ## 5. WhatsApp sharing / preview
 
@@ -208,6 +246,20 @@ The failed workflow files were removed. The project should currently remain simp
 - Failed GitHub Actions workflows from the experimental automation approach were removed.
 - Routine edits should now be made directly and deliberately rather than through broken automation.
 
+### 22 August 2026 — Background translucency variables
+
+- The background cream wash and frosted-card blur had hardcoded RGBA/blur values and no knob to retune them.
+- Added `:root` variables: `--bg-veil` (main), `--bg-veil-top/mid/deep/bottom`, `--panel-opacity`, `--panel-blur`, plus `--bg-photo-position` and `--bg-photo-saturate`.
+- Default values match the previous look (`--bg-veil: 1`, panel opacity `0.62`, blur `7px`).
+
+### 22 August 2026 — Separate photo folders
+
+- Extracted the embedded background portrait to `background/background.jpg`.
+- Extracted the embedded couple photograph to `photos/couple.jpg`.
+- `index.html` now points at those files by name so the owner can replace a file in-place or keep several favorites and change only the filename.
+- Vinayakar artwork and WhatsApp `preview/` image were left as they were.
+- `index.html` is much smaller now that those two photographs are no longer inline.
+
 ### Context persistence
 
 - This file exists specifically so future ChatGPT sessions and collaborators can recover project state, decisions, pending work, and important constraints.
@@ -219,7 +271,8 @@ The failed workflow files were removed. The project should currently remain simp
 2. Potential future enhancement: additional photos/slideshow.
 3. Potential future enhancement: further invitation sections.
 4. If changing the WhatsApp preview, replace `preview/DSC04255.JPG` with another image using the same exact filename/path.
-5. If changing `index.html`, preserve the current working WhatsApp metadata, mobile behavior, countdown behavior, and embedded couple image.
+5. If changing `index.html`, preserve the current working WhatsApp metadata, mobile behavior, countdown behavior, and the `photos/` + `background/` file references.
+6. To try a different background or couple photo, add the file to the matching folder and either reuse the active filename or change only that filename in `index.html`.
 
 ## 14. Editing rules for future work
 
@@ -232,5 +285,6 @@ The failed workflow files were removed. The project should currently remain simp
 - Keep important decisions in this file.
 - Whenever changing a feature, append a short dated entry to the change log.
 - Never assume an asset exists: verify the repository path before putting it into HTML.
+- Couple and background photos must live in `photos/` and `background/` respectively; do not re-embed those photographs as base64 in `index.html`.
 - Before changing `index.html`, preserve existing functionality and test the resulting live page on mobile.
 - Do not reintroduce the failed GitHub Actions automation unless the owner explicitly asks for automation.
