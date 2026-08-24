@@ -19,21 +19,25 @@
     const IMG_DIR = {
       previewDir: 'preview/',
       backgroundDir: 'background/',
-      photosDir: 'photos/'
+      photosDir: 'photos/',
+      vinayagarDir: 'vinayagar/'
     };
     const IMG_FILE = {
       preview: 'DSC04255.JPG',
       background: 'background.jpg',
-      couple: 'faraway.jpeg'
+      couple: 'faraway.jpeg',
+      vinayagar: 'vin4.png'
     };
     const IMAGE_PATHS = {
       preview: IMG_DIR.previewDir + IMG_FILE.preview,
       background: IMG_DIR.backgroundDir + IMG_FILE.background,
-      couple: IMG_DIR.photosDir + IMG_FILE.couple
+      couple: IMG_DIR.photosDir + IMG_FILE.couple,
+      vinayagar: IMG_DIR.vinayagarDir + IMG_FILE.vinayagar
     };
 
     // Apply background immediately so CSS sees it as soon as possible
     document.documentElement.style.setProperty('--bg-photo', `url("${IMAGE_PATHS.background}")`);
+    document.documentElement.style.setProperty('--vinayagar-photo', `url("${IMAGE_PATHS.vinayagar}")`);
 
     function applyImagePaths(){
       const og = document.querySelector('meta[property="og:image"]');
@@ -42,6 +46,8 @@
       if(tw) tw.content = IMAGE_PATHS.preview;
       const coupleImg = document.querySelector('.photo-frame img');
       if(coupleImg) coupleImg.src = IMAGE_PATHS.couple;
+      const vinayagarImg = document.querySelector('.ganesh');
+      if(vinayagarImg) vinayagarImg.src = IMAGE_PATHS.vinayagar;
     }
 
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyImagePaths);
@@ -61,8 +67,11 @@
     --lilac-pale:#EDE3F5;
     --gold:#B4914A;
     --gold-light:#D9C48F;
+    --gold-strong:#C79D52;
     --rose:#C97B84;
     --line: rgba(74,53,96,0.18);
+    --blue-link:#1f6ed4;
+    --vinayagar-photo: url("vinayagar/vin1.jpeg");
 
     /* Background photo — change the filename to try another image in background/ */
     --bg-photo: url("background/background.jpg");
@@ -180,18 +189,40 @@
     margin-bottom:20px;
   }
   .ganesh{
-    width:56px;
-    height:56px;
-    margin: 0 auto 16px;
+    display:block;
+    width:62px;
+    height:62px;
+    margin: 0 auto 10px;
+    object-fit:contain;
+    filter: drop-shadow(0 4px 8px rgba(199,157,82,0.28));
   }
   .title-word{
+    display:block;
+    position:relative;
     font-family:'Playfair Display', serif;
     font-style:italic;
-    font-weight:500;
-    font-size:22px;
-    letter-spacing:1px;
-    color: var(--plum-deep);
-    margin-bottom:16px;
+    font-weight:600;
+    font-size:clamp(24px, 6vw, 32px);
+    letter-spacing:0.04em;
+    margin: 0 auto 14px;
+    background: linear-gradient(90deg, #1a1714 0%, #3b2a1d 18%, #705126 30%, #1b1715 46%, #a7762d 60%, #1c1816 74%, #2e241d 100%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 18px rgba(223,181,93,0.35);
+    animation: swipeLoop 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(247, 205, 93, 0.25));
+  }
+  .title-word::after{
+    content:"✦";
+    position:absolute;
+    right:-12px;
+    top:-8px;
+    font-size:12px;
+    color: rgba(255, 214, 112, 0.9);
+    text-shadow: 0 0 10px rgba(255,223,130,0.8);
+    animation: sparkle 1.8s ease-in-out infinite alternate;
   }
   .names{
     font-family:'Alex Brush', cursive;
@@ -211,7 +242,7 @@
     font-style:italic;
     font-weight:600;
     font-size:clamp(30px, 7vw, 42px);
-    color: var(--lavender);
+    color: var(--gold-strong);
     margin: 4px 0;
     letter-spacing:0.02em;
     line-height:1;
@@ -248,20 +279,22 @@
     border-radius: 4px;
     overflow:hidden;
     border: 1px solid var(--line);
-    padding:10px;
+    padding: 10px 10px 10px 10px;
     background: rgba(255,255,255,0.55);
     backdrop-filter: blur(2px);
+    margin: 0 -1px;
   }
   .photo-frame img{
     display:block;
     width:100%;
     height:auto;
     border-radius: 2px;
+    margin: 0;
   }
   .photo-frame::before{
     content:"";
     position:absolute;
-    inset:4px;
+    inset:4px 5px 4px 5px;
     border: 1px solid var(--gold-light);
     border-radius:2px;
     pointer-events:none;
@@ -434,10 +467,10 @@
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    gap:9px;
+    gap:8px;
     text-decoration:none;
-    padding: 12px 18px;
-    border-radius: 999px;
+    padding: 10px 14px;
+    border-radius: 16px;
     background: rgba(251,247,241, var(--panel-opacity));
     border: 1px solid rgba(255,255,255,0.55);
     box-shadow: 0 10px 22px rgba(74,53,96,0.12);
@@ -463,35 +496,49 @@
   }
   .map-line .pin svg{ width:100%; height:100%; }
   .map-line .venue-info{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
+    display:block;
     text-align:left;
   }
   .map-line .venue-name{
-    font-family:'Cinzel', serif;
-    font-size:15px;
-    letter-spacing:0.6px;
+    display:block;
+    font-family:'Alex Brush', cursive;
+    font-size:20px;
+    letter-spacing:0.03em;
     color: var(--plum-deep);
-    text-transform:uppercase;
+    text-transform:none;
     border-bottom: 1.5px solid var(--gold);
     padding-bottom:2px;
     text-shadow: 0 1px 3px rgba(255,255,255,0.6);
+    line-height:1.05;
+    margin-bottom:4px;
+  }
+  .map-line .venue-location{
+    display:inline-flex;
+    align-items:center;
+    font-family:'Cormorant Garamond', serif;
+    font-size:14px;
+    letter-spacing:0.04em;
+    color: var(--plum-deep);
+    opacity:0.95;
+    margin:0;
+    font-style:italic;
   }
   .map-button{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    margin-top:6px;
+    margin-left:8px;
     padding: 4px 10px;
     border-radius: 999px;
-    background: rgba(140,107,174,0.10);
-    border: 1px solid rgba(74,53,96,0.18);
+    background: var(--blue-link);
+    border: 1px solid rgba(255,255,255,0.38);
+    box-shadow: 0 6px 14px rgba(31,110,212,0.24);
     font-family:'Cinzel', serif;
     font-size:9px;
-    letter-spacing:1.6px;
+    letter-spacing:1.2px;
     text-transform:uppercase;
-    color: var(--plum-deep);
+    color: #fff;
+    font-style:italic;
   }
   @media (prefers-reduced-motion: reduce){
     .map-line .pin{ animation:none; }
@@ -506,14 +553,24 @@
   .footer .fam{
     font-size:14px;
     color: var(--plum);
-    opacity:0.75;
-    line-height:1.6;
+    opacity:0.8;
+    line-height:1.5;
   }
   .footer .sign{
-    margin-top:14px;
+    position:relative;
+    display:inline-block;
+    margin-top:10px;
     font-family:'Alex Brush', cursive;
-    font-size:24px;
-    color: var(--lavender);
+    font-size:clamp(28px, 8vw, 36px);
+    color: #1d1a19;
+    text-shadow: 0 0 14px rgba(196,150,67,0.22);
+    letter-spacing:0.04em;
+    background: linear-gradient(90deg, #1a1714 0%, #3b2a1d 18%, #705126 30%, #1b1715 46%, #a7762d 60%, #1c1816 74%, #2e241d 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: swipeLoop 4s ease-in-out infinite;
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -526,20 +583,23 @@
 /* Premium single-line wedding countdown */
 .elegant-countdown{text-align:center;margin:0 auto;padding:24px 10px 26px;color:var(--plum);position:relative;overflow:hidden}
 .countdown-kicker{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.34em;color:var(--gold);margin-bottom:8px}
-.countdown-date{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,30px);line-height:1;letter-spacing:.08em;color:var(--plum-deep);text-shadow:0 0 18px rgba(180,145,74,0.28)}
-.countdown-date span{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.20em;vertical-align:middle;color:var(--lavender)}
+.countdown-date{font-family:'Playfair Display',serif;font-size:clamp(28px,8vw,46px);line-height:1;letter-spacing:.08em;color:var(--plum-deep);text-shadow:0 0 18px rgba(180,145,74,0.28)}
+.countdown-date span{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.20em;vertical-align:middle;color:var(--gold-strong)}
 .countdown-heart{color:var(--gold);font-size:15px;line-height:1;margin:9px 0 8px;animation:heartPop 1.8s ease-in-out infinite;text-shadow:0 0 12px rgba(190,150,80,.22)}
-.countdown-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(7px,2.3vw,16px);white-space:nowrap}
-.countdown-unit{display:flex;flex-direction:column;align-items:center;min-width:clamp(72px,22vw,110px)}
-.countdown-unit span{font-family:'Playfair Display',serif;font-size:clamp(38px,10.5vw,58px);line-height:.9;font-weight:500;letter-spacing:.01em;color:var(--plum-deep)}
+.countdown-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(6px,2vw,12px);white-space:nowrap}
+.countdown-unit{display:flex;flex-direction:column;align-items:center;min-width:clamp(60px,18vw,96px)}
+.countdown-unit span{font-family:'Playfair Display',serif;font-size:clamp(28px,7vw,42px);line-height:.9;font-weight:500;letter-spacing:.01em;color:var(--plum-deep)}
 .countdown-unit small{margin-top:7px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.24em;color:var(--lavender)}
-.countdown-separator{font-family:'Playfair Display',serif;font-size:34px;line-height:1;color:var(--gold);padding-bottom:19px;opacity:.75}
+.countdown-separator{font-family:'Playfair Display',serif;font-size:28px;line-height:1;color:var(--gold);padding-bottom:17px;opacity:.75}
 .countdown-foot{margin-top:15px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.30em;color:var(--gold)}
 .countdown-pulse{animation:countdownPulse .65s ease-out}
 @keyframes countdownPulse{0%{opacity:.72;transform:scale(.985)}45%{opacity:1;transform:scale(1.012)}100%{opacity:1;transform:scale(1)}}
 @keyframes heartPop{0%,100%{transform:scale(1);opacity:.72}12%{transform:scale(1.22);opacity:1}24%{transform:scale(1);opacity:.82}}
+@keyframes textShimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes sparkle{0%{transform:scale(0.8);opacity:0.4}100%{transform:scale(1.3);opacity:1}}
+@keyframes swipeLoop{0%{background-position:0% 50%; filter:brightness(0.9)}25%{background-position:55% 50%; filter:brightness(1.1)}50%{background-position:100% 50%; filter:brightness(1.2)}75%{background-position:55% 50%; filter:brightness(1.1)}100%{background-position:0% 50%; filter:brightness(0.9)}}
 @media (max-width:420px){.countdown-row{gap:4px}.countdown-unit{min-width:68px}.countdown-unit span{font-size:35px}.countdown-separator{font-size:28px;padding-bottom:18px}.countdown-unit small{font-size:7px;letter-spacing:.18em}}
-@media (prefers-reduced-motion:reduce){.countdown-pulse,.countdown-heart{animation:none}}
+@media (prefers-reduced-motion:reduce){.countdown-pulse,.countdown-heart,.title-word,.footer .sign{animation:none}}
 
 </style>
 </head>
@@ -619,18 +679,18 @@
         </span>
         <span class="venue-info">
           <span class="venue-name">Town Panchayat Marriage Hall</span>
+          <span class="venue-location">Kallidaikurichi, Tirunelveli</span>
           <span class="map-button">Click here</span>
         </span>
       </a>
-      <div class="venue-address">Kallidaikurichi, Tirunelveli – 627 416</div>
     </div>
 
   </div>
 
   <div class="footer">
-    <div class="text-panel" style="display:inline-block; padding:14px 24px;">
-      <div class="fam">With love &amp; best wishes from<br>the family, relatives &amp; friends</div>
-      <div class="sign">See you there ♡</div>
+    <div class="text-panel" style="display:inline-block; padding:12px 18px; border-radius:18px;">
+      <div class="fam">With love from our family &amp; friends</div>
+      <div class="sign">See you there</div>
     </div>
   </div>
 
@@ -638,6 +698,26 @@
 </div>
 
 <script>
+(function(){
+  const hero = document.querySelector('.hero');
+  if(hero){
+    const img = hero.querySelector('.ganesh');
+    if(img){
+      img.src = 'vinayagar/vin1.jpeg';
+      img.alt = 'Vinayagar';
+      img.classList.remove('ganesh-reference');
+    }
+    const title = hero.querySelector('.title-word');
+    if(!title){
+      const newTitle = document.createElement('div');
+      newTitle.className = 'title-word';
+      newTitle.textContent = 'The Celebration';
+      const firstName = hero.querySelector('.names');
+      if(firstName) hero.insertBefore(newTitle, firstName);
+    }
+  }
+})();
+
 // Elegant live countdown — 30 Aug 2026, 08:00 IST.
 (function(){
   const target = new Date('2026-08-30T08:00:00+05:30').getTime();
