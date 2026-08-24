@@ -78,8 +78,8 @@
     --bg-veil-bottom: 0.5;
 
     /* Frosted invitation cards sitting on the photo */
-    --panel-opacity: 0.52;
-    --panel-blur: 1px;
+    --panel-opacity: 0.62;
+    --panel-blur: 1.2px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -122,6 +122,21 @@
     backdrop-filter: blur(var(--panel-blur));
     -webkit-backdrop-filter: blur(var(--panel-blur));
     border-radius: 28px;
+    position:relative;
+    overflow:hidden;
+    box-shadow: 0 10px 24px rgba(74,53,96,0.08);
+  }
+  .text-panel::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: linear-gradient(125deg,
+      rgba(255,255,255,0.55) 0%,
+      rgba(255,255,255,0.18) 24%,
+      rgba(255,255,255,0.02) 42%,
+      rgba(255,255,255,0.14) 100%);
+    pointer-events:none;
+    opacity:0.9;
   }
   .bg-photo::after{
     content:"";
@@ -180,24 +195,26 @@
   }
   .names{
     font-family:'Alex Brush', cursive;
-    font-size:48px;
-    line-height:1.05;
+    font-size:clamp(44px, 12vw, 58px);
+    line-height:0.95;
     color: var(--plum-deep);
     margin: 4px 0;
     text-shadow: 0 1px 0 rgba(255,255,255,0.5);
     white-space:nowrap;
+    letter-spacing:0.02em;
   }
   .names-small{
-    font-size:42px;
+    font-size:clamp(38px, 10.5vw, 52px);
   }
   .with-word{
     font-family:'Cormorant Garamond', serif;
     font-style:italic;
-    font-weight:500;
-    font-size:18px;
+    font-weight:600;
+    font-size:clamp(30px, 7vw, 42px);
     color: var(--lavender);
     margin: 4px 0;
-    letter-spacing:0.5px;
+    letter-spacing:0.02em;
+    line-height:1;
   }
   .parents{
     font-size:14px;
@@ -248,14 +265,6 @@
     border: 1px solid var(--gold-light);
     border-radius:2px;
     pointer-events:none;
-  }
-  .photo-caption{
-    text-align:center;
-    font-style:italic;
-    font-weight:500;
-    font-size:14.5px;
-    color: var(--lavender);
-    margin-top:10px;
   }
 
   /* ---------- Countdown / Flip clock ---------- */
@@ -517,7 +526,7 @@
 /* Premium single-line wedding countdown */
 .elegant-countdown{text-align:center;margin:0 auto;padding:24px 10px 26px;color:var(--plum);position:relative;overflow:hidden}
 .countdown-kicker{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.34em;color:var(--gold);margin-bottom:8px}
-.countdown-date{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,30px);line-height:1;letter-spacing:.08em;color:var(--plum-deep)}
+.countdown-date{font-family:'Playfair Display',serif;font-size:clamp(22px,6vw,30px);line-height:1;letter-spacing:.08em;color:var(--plum-deep);text-shadow:0 0 18px rgba(180,145,74,0.28)}
 .countdown-date span{font-family:'Cinzel',serif;font-size:.62em;letter-spacing:.20em;vertical-align:middle;color:var(--lavender)}
 .countdown-heart{color:var(--gold);font-size:15px;line-height:1;margin:9px 0 8px;animation:heartPop 1.8s ease-in-out infinite;text-shadow:0 0 12px rgba(190,150,80,.22)}
 .countdown-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(7px,2.3vw,16px);white-space:nowrap}
@@ -573,7 +582,6 @@
     <div class="photo-frame">
       <img src="photos/couple.jpg" alt="Divyadharshni and Vishnu">
     </div>
-    <div class="photo-caption">Divyadharshni &amp; Vishnu</div>
   </div>
 
   <div class="countdown-section text-panel" style="margin:0 16px;">
